@@ -31,8 +31,8 @@ sub import {
 sub add_trigger {
     my $proto = shift;
 
-    # should be copy of the hash: for inheritance
-    my %triggers = %{__fetch_triggers($proto)};
+    # should be deep copy of the hash: for inheritance
+    my %triggers = __deep_dereference(__fetch_triggers($proto));
     while (my($when, $code) = splice @_, 0, 2) {
 	__validate_triggerpoint($proto, $when);
 	unless (ref($code) eq 'CODE') {
@@ -78,6 +78,15 @@ sub __update_triggers {
 	# class data inheritable
 	$proto->__triggers($triggers);
     }
+}
+
+sub __deep_dereference {
+    my $hashref = shift;
+    my %copy;
+    while (my($key, $arrayref) = each %$hashref) {
+	$copy{$key} = [ @$arrayref ];
+    }
+    return %copy;
 }
 
 1;

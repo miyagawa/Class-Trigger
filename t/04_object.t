@@ -1,5 +1,5 @@
 use strict;
-use Test::More tests => 4;
+use Test::More tests => 5;
 
 use IO::Scalar;
 
@@ -35,3 +35,12 @@ ok(Foo->add_trigger(before_foo => sub { print "before_foo\n" }),
     untie *STDOUT;
     is $out, "before_foo\nfoo\nafter_foo1\nafter_foo2\n";
 }
+
+{
+    my $foo = Foo->new;
+    tie *STDOUT, 'IO::Scalar', \my $out;
+    $foo->foo;
+    untie *STDOUT;
+    is $out, "before_foo\nfoo\n";
+}
+
