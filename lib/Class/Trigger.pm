@@ -10,7 +10,9 @@ use Carp ();
 sub import {
     my $class = shift;
     my $pkg = caller(0);
-    unless ($pkg->isa('Class::Data::Inheritable')) {
+
+    # XXX 5.005_03 isa() is broken with MI
+    unless ($pkg->can('mk_classdata')) {
 	no strict 'refs';
 	push @{"$pkg\::ISA"}, 'Class::Data::Inheritable';
     }
