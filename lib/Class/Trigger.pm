@@ -83,7 +83,7 @@ __END__
 
 =head1 NAME
 
-Class::Trigger - Mix-in to add / call inheritable triggers
+Class::Trigger - Mixin to add / call inheritable triggers
 
 =head1 SYNOPSIS
 
@@ -116,7 +116,7 @@ Class::Trigger - Mix-in to add / call inheritable triggers
 
 =head1 DESCRIPTION
 
-Class::Trigger is a mix-in class to add / call triggers (or hooks)
+Class::Trigger is a mixin class to add / call triggers (or hooks)
 that get called at some points you specify.
 
 =head1 METHODS
