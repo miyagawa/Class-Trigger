@@ -110,6 +110,10 @@ Class::Trigger - Mix-in to add / call inheritable triggers
 
   Bar->add_trigger(before_foo => \&sub);
 
+  # triggers can be object based
+  $foo->add_hook(after_foo => \&sub3);
+  $foo->foo;			# sub3 would appply only to this object
+
 =head1 DESCRIPTION
 
 Class::Trigger is a mix-in class to add / call triggers (or hooks)

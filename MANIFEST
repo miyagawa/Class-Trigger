@@ -1,6 +1,7 @@
 Changes
 MANIFEST
 Makefile.PL
+README
 lib/Class/Trigger.pm
 t/00_compile.t
 t/01_trigger.t
