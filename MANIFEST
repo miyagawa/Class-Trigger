@@ -13,4 +13,3 @@ t/06_coverage.t
 t/lib/Foo.pm
 t/lib/Foo/Bar.pm
 t/lib/Foo/Valid.pm
-META.yml                                 Module meta-data (added by MakeMaker)
