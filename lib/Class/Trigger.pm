@@ -2,7 +2,7 @@ package Class::Trigger;
 
 use strict;
 use vars qw($VERSION);
-$VERSION = "0.10";
+$VERSION = "0.101";
 
 use Class::Data::Inheritable;
 use Carp ();
@@ -20,11 +20,11 @@ sub import {
     $pkg->mk_classdata('__triggers');
     $pkg->mk_classdata('__triggerpoints');
 
-    $pkg->__triggerpoints({ map { $_ => 1 } @_ }) if @_;
+    $pkg->__triggerpoints({ map { lc $_ => 1 } @_ }) if @_;
 
     # export mixin methods
     no strict 'refs';
-    my @methods = qw(add_trigger call_trigger);
+    my @methods = qw(add_trigger new_trigger call_trigger call_deep_trigger);
     *{"$pkg\::$_"} = \&{$_} for @methods;
 }
 
@@ -42,11 +42,19 @@ sub add_trigger {
     __update_triggers($proto, \%triggers);
 }
 
+# Create a new trigger point after import.
+sub new_trigger {
+    my $proto = shift;
+    my $points = $proto->__triggerpoints || {};
+    map { $points->{lc $_} = 1 } @_;
+    $points->__triggerpoints($points);
+}
+
 sub call_trigger {
     my $self = shift;
     return unless my $all_triggers = __fetch_triggers($self); # any triggers?
     my $when = shift;
-    if (my $triggers = $all_triggers->{$when}) {
+    if (my $triggers = $all_triggers->{lc $when}) {
 	for my $trigger (@$triggers) {
 	    $trigger->($self, @_);
 	}
@@ -59,11 +67,36 @@ sub call_trigger {
     }
 }
 
+use Class::ISA;
+
+# Run triggers descending from object (if specified) then class down 
+# through its ancessors. A port of CGI::Application::call_hook method.
+sub call_deep_trigger {
+    my $self = shift;
+    my $when = lc shift;
+    my @args = @_;
+    my $self_class = ref $self || $self;
+    my %has_run;
+    __validate_triggerpoint($self, $when); # the right thing?
+    my @path = Class::ISA::self_and_super_path($self_class);
+    unshift @path, $self if ref $self; # if called from an object add to the front of the line
+    foreach my $p (@path) { # walk class hierarchy and run triggers making sure not to run the same one twice.
+        next unless my $all_triggers = __fetch_triggers($p);
+        if (my $triggers = $all_triggers->{$when}) {
+            for my $trigger (@$triggers) {
+                next if $has_run{$trigger};
+                $trigger->($p, @args);
+                $has_run{$trigger} = 1;
+            }
+        }
+    }
+}
+
 sub __validate_triggerpoint {
     return unless my $points = $_[0]->__triggerpoints;
     my ($self, $when) = @_;
     Carp::croak("$when is not valid triggerpoint for ".(ref($self) ? ref($self) : $self))
-	unless $points->{$when};
+	unless $points->{lc $when};
 }
 
 sub __fetch_triggers {
