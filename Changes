@@ -5,7 +5,7 @@ Revision history for Perl extension Class::Trigger.
           triggers added to the superclass after trigger is added in
           the child class are ignored in the child class.
           See t/03_inherit.t for example.
-          (Thanks to Brad Choate, Yann Kerherve and Ben Trott)
+          (Thanks to Brad Choate, Yann Kerherve, Ben Trott and Fumiaki Yoshimatsu)
 
 0.10  Tue Aug 23 22:11:21 UTC 2005
         - Documentation fix
