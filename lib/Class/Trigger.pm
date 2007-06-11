@@ -69,11 +69,10 @@ sub call_trigger {
 
     if (my @triggers = __fetch_all_triggers($self, $when)) { # any triggers?
         for my $trigger (@triggers) {
-              my @return = $trigger->[0]->($self, @_);
-                push @{$result_store->{'_class_trigger_results'}}, \@return;
-                return undef if ($trigger->[1] and not $return[0]); # only abort on false values.
-         
-    }
+            my @return = $trigger->[0]->($self, @_);
+            push @{$result_store->{'_class_trigger_results'}}, \@return;
+            return undef if ($trigger->[1] and not $return[0]); # only abort on false values.
+        }
     }
     else {
         # if validation is enabled we can only add valid trigger points
