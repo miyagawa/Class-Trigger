@@ -25,28 +25,24 @@ sub add_trigger {
 
     my $triggers = __fetch_triggers($proto);
 
-    if (ref($_[1]) eq 'CODE') { 
-
-    while (my($when, $code) = splice @_, 0, 2) {
-        __validate_triggerpoint($proto, $when);
-        Carp::croak('add_trigger() needs coderef') unless ref($code) eq 'CODE';
-        push @{$triggers->{$when}}, [$code, undef];
+    my %params = @_;
+    my @values = values %params;
+    if (@_ > 2 && grep { ref && ref eq 'CODE' } @values == @values) {
+        Carp::croak "mutiple trigger registration in one add_trigger() call is deprecated.";
     }
+
+    if ($#_ == 1 && ref($_[1]) eq 'CODE') {
+        @_ = (name => $_[0], callback => $_[1]);
     }
-    elsif (grep {'name'} @_) {
-        my %args = ( name => undef, callback => undef, abortable => undef, @_);
-        my $when= $args{'name'};
-        my $code = $args{'callback'};
-        my $abortable = $args{'abortable'};
-        __validate_triggerpoint($proto, $when);
-        Carp::croak('add_trigger() needs coderef') unless ref($code) eq 'CODE';
-        push @{$triggers->{$when}}, [$code, $abortable];
 
+    my %args = ( name => undef, callback => undef, abortable => undef, @_ );
+    my $when = $args{'name'};
+    my $code = $args{'callback'};
+    my $abortable = $args{'abortable'};
+    __validate_triggerpoint( $proto, $when );
+    Carp::croak('add_trigger() needs coderef') unless ref($code) eq 'CODE';
+    push @{ $triggers->{$when} }, [ $code, $abortable ];
 
-    } else {
-        Carp::croak('add_trigger() needs coderef');
-
-    }
     1;
 }
 
@@ -334,11 +330,14 @@ in action.
 
 =back
 
-=head1 AUTHOR
+=head1 AUTHORS
 
 Original idea by Tony Bowden E<lt>tony@kasei.comE<gt> in Class::DBI.
 
 Code by Tatsuhiko Miyagawa E<lt>miyagawa@bulknews.netE<gt>.
+
+Jesse Vincent added a code to get return values from triggers and
+abortable flag.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
