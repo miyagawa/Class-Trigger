@@ -1,5 +1,5 @@
 package Class::Trigger;
-
+use 5.008_001;
 use strict;
 use vars qw($VERSION);
 $VERSION = "0.13";
@@ -369,6 +369,8 @@ Code by Tatsuhiko Miyagawa E<lt>miyagawa@bulknews.netE<gt>.
 
 Jesse Vincent added a code to get return values from triggers and
 abortable flag.
+
+=head1 LICENSE
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
