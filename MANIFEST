@@ -1,5 +1,6 @@
 Changes
 inc/IO/Scalar.pm
+inc/IO/WrapTie.pm
 inc/Module/Install.pm
 inc/Module/Install/Base.pm
 inc/Module/Install/Can.pm
@@ -30,6 +31,7 @@ t/05_args.t
 t/06_coverage.t
 t/07_abortable_callbacks.t
 t/08_dollar_underscore.t
+t/09_inherit.t
 t/lib/Foo.pm
 t/lib/Foo/Bar.pm
 t/lib/Foo/Valid.pm
