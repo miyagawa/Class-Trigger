@@ -87,13 +87,16 @@ sub call_trigger {
 }
 
 sub __fetch_all_triggers {
-    my ($obj, $when, $list, $order) = @_;
+    my ($obj, $when, $list, $order, $nocache) = @_;
+    $nocache = 0 unless defined $nocache;
     my $class = ref $obj || $obj;
     my $return;
     my $when_key = defined $when ? $when : '';
     
-    return __cached_triggers($obj, $when)
-        if $Fetch_All_Triggers_Cache{$class}{$when_key};
+    unless ($nocache) {
+        return __cached_triggers($obj, $when)
+            if $Fetch_All_Triggers_Cache{$class}{$when_key};
+    }
     
     unless ($list) {
         # Absence of the $list parameter conditions the creation of
@@ -110,9 +113,10 @@ sub __fetch_all_triggers {
     push @classes, $class;
     foreach my $c (@classes) {
         next if $list->{$c};
-        if (UNIVERSAL::can($c, 'call_trigger')) {
+#        if (UNIVERSAL::can($c, 'call_trigger')) {
+        if ($c->can('call_trigger')) {
             $list->{$c} = [];
-            __fetch_all_triggers($c, $when, $list, $order)
+            __fetch_all_triggers($c, $when, $list, $order, 1)
                 unless $c eq $class;
             if (defined $when && $Triggers{$c}{$when}) {
                 push @$order, $c;
