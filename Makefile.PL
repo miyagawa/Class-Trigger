@@ -23,7 +23,7 @@ my %WriteMakefileArgs = (
   "MIN_PERL_VERSION" => "5.008001",
   "NAME" => "Class::Trigger",
   "PREREQ_PM" => {},
-  "VERSION" => "0.14",
+  "VERSION" => "0.15",
   "test" => {
     "TESTS" => "t/*.t"
   }
